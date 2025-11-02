@@ -1,0 +1,121 @@
+* {
+  margin: 0;
+  padding: 0;
+  
+}
+
+
+.home-container {
+  width: 100%;
+  height: 80vh;
+  padding: 40px 40px 40px 40px;
+  background-color: #f5f8ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 1.2s ease-in;
+}
+
+
+.quote-section {
+  text-align:center;
+  margin-bottom: 50px;
+  animation: fadeUp 1s ease-in-out;
+}
+
+.quote-section h2 {
+  font-size: 2rem;
+  color: #3a30c9;
+  margin-top: 10px;;
+  margin-bottom: 10px;
+  font-family:fantasy
+  
+}
+
+.quote-section p {
+  font-size: 1.1rem;
+  color: #555;
+
+}
+
+
+.home-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  animation: fadeUp 1.2s ease-in-out;
+}
+
+.home-text {
+  max-width: 1000px;
+  
+}
+
+.home-text h2 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.home-text p {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.home-btn {
+  background-color: #2463eb;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.home-btn:hover {
+  background: #1a4ecb;
+}
+
+/* Doctor Image */
+.home-image {
+  width: 600px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@media (max-width: 768px) {
+  .home-content {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .home-image {
+    max-width: 300px;
+    margin-top: 30px;
+  }
+}

@@ -7,6 +7,7 @@ function Upload() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
@@ -25,7 +26,7 @@ function Upload() {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/predict", {
+      const response = await fetch("http://127.0.0.1:8080/predict", {
         method: "POST",
         body: formData,
       });
@@ -35,7 +36,11 @@ function Upload() {
       }
 
       const data = await response.json();
-      navigate("/predict", { state: { result: data } });
+      sessionStorage.setItem("lastPrediction", JSON.stringify(data));
+      sessionStorage.setItem("lastImage", preview);
+
+        // navigate and also send via state
+        navigate("/predict", { state: { result: data, imageUrl: preview } });
     } catch (error) {
       console.error("Error during prediction:", error);
       alert("Error while uploading image or connecting to backend");

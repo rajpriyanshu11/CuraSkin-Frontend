@@ -1,49 +1,35 @@
-
-// import { useLocation } from "react-router-dom";
-// import "./Prediction.css";
-
-// function Prediction() {
-//   const location = useLocation();
-//   // preference: use state from navigation (fast), fallback to sessionStorage
-//   const resultFromState = location.state?.result;
-//   const stored = sessionStorage.getItem("lastPrediction");
-//   const result = resultFromState || (stored ? JSON.parse(stored) : null);
-
-//   if (!result) {
-//     return (
-//       <div className="prediction-container">
-//         <h2>No prediction available</h2>
-//         <p>Please upload an image first.</p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="prediction-container">
-//       <h2>Prediction Result</h2>
-//       <div className="prediction-card">
-//         <p><strong>Predicted:</strong> {result.prediction}</p>
-//         <p><strong>Confidence:</strong> {result.confidence}%</p>
-//         <p><strong>Summary:</strong> {result.summary}</p>
-//         <p><strong>Remedies:</strong> {result.remedies}</p>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Prediction;
-
 import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./Prediction.css";
 
+const severityMap = {
+  acne: "Low",
+  vitiligo: "Low",
+  eczema: "Moderate",
+  fungal_infection: "Moderate",
+  melanoma: "High",
+  cell_carcinoma: "High",
+};
+
+
 function Prediction() {
   const location = useLocation();
+
   const resultFromState = location.state?.result;
-  const stored = sessionStorage.getItem("lastPrediction");
-  const result = resultFromState || (stored ? JSON.parse(stored) : null);
+  const imageFromState = location.state?.imageUrl;
+
+  const storedResult = sessionStorage.getItem("lastPrediction");
+  const storedImage = sessionStorage.getItem("lastImage");
+
+  const result = resultFromState || (storedResult ? JSON.parse(storedResult) : null);
+  const imageUrl = imageFromState || storedImage || null;
+
 
   const [selectedTreatment, setSelectedTreatment] = useState("");
+
+  const diseaseKey = result?.prediction?.toLowerCase();
+  const severityLevel = severityMap[diseaseKey] || "Not available";
+
 
   useEffect(() => {
     if (resultFromState) {
@@ -65,13 +51,40 @@ function Prediction() {
       <h2 className="prediction-heading">Prediction Result</h2>
 
       <div className="prediction-card">
-        <p><strong>Predicted:</strong> {result.prediction}</p>
-        <p><strong>Confidence:</strong> {result.confidence}%</p>
-        <p><strong>Summary:</strong> {result.summary}</p>
+        <p><strong>Predicted Disease:</strong> {result.prediction}</p>
+        <p><strong>Confidence Level:</strong> {result.confidence}%</p>
+        <p><strong>Severity Level:</strong> {severityLevel}</p>
+        {/* <p><strong>Symptoms:</strong> {result.symptoms}</p> */}
+        <p className="section-title"><strong>Common Symptoms:</strong></p>
+        {/* <ul>
+          {result.symptoms?.map((item, index) => (
+            <li key={index}>{item}</li>
+        ))}
+        </ul> */}
+        <ul className="symptom-list">
+           {result.symptoms?.map((symptom, index) => (
+           <li key={index}>{symptom}</li>
+            ))}
+        </ul>
+
+        
+              {imageUrl && (
+        <div className="uploaded-image-section">
+          <p><strong>Uploaded Image:</strong></p>
+          <img
+            src={imageUrl}
+            alt="Uploaded skin condition"
+            className="uploaded-image"
+          />
+        </div>
+      )}
       </div>
 
+
+
+
       <div className="treatment-section">
-        <h3 className="treatment-heading">Treatment Recommendations</h3>
+        <h3 className="treatment-heading">Treatment Options</h3>
 
         <div className="button-group">
           <button
@@ -90,13 +103,62 @@ function Prediction() {
 
         {selectedTreatment === "allopathy" && (
           <div className="remedy-box">
-            <p>Allopathy remedies will be displayed here from backend.</p>
+            <h4>Allopathic Treatment:</h4>
+            <ul>
+              {result.allopathy?.recommendations?.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+
+          <h4>Nearby Hospitals:</h4>
+          <ul>
+            {result.allopathy?.hospitals?.map((item, index) => (
+              <li key={index}>
+                {typeof item === "string" ? (
+                  item
+                ) : (
+                  <a
+                    href={item.maps_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {item.name}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
           </div>
         )}
 
         {selectedTreatment === "homeopathy" && (
           <div className="remedy-box">
-            <p>Homeopathy remedies will be displayed here from backend.</p>
+            <h4>Homeopathic Treatment:</h4>
+            <ul>
+              {result.homeopathy?.recommendations?.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+
+          <h4>Nearby Clinics:</h4>
+          <ul>
+            {result.homeopathy?.clinics?.map((item, index) => (
+              <li key={index}>
+                {typeof item === "string" ? (
+                  item
+                ) : (
+                  <a
+                    href={item.maps_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {item.name}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+
           </div>
         )}
       </div>
